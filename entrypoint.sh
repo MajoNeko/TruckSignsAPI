@@ -4,15 +4,33 @@ set -e
 echo "Waiting for postgres to connect ..."
 
 # Wait for the database to be up and ready, if not ready, then sleep for 5 seconds
-while ! nc -z db 5432; do
-  #TODO: Add missing implementation
+until python -c "
+import os, sys, psycopg2
+try:
+    psycopg2.connect(
+        dbname=os.environ['DB_NAME'], 
+        user=os.environ['DB_USER'],
+        password=os.environ['DB_PASSWORD'],
+        host=os.environ['DB_HOST'],
+        port=os.environ.get('DB_PORT', '5432'),
+    )
+except psycopg2.OperationalError:
+    sys.exit(1)
+"; do
+  echo "Postgres unavailable, retrying in 2s..."
+  sleep 5
 done
 
 echo "PostgreSQL is active"
 
+echo "Collecting static files:"
 python manage.py collectstatic --noinput
 
-#TODO add migrations
+echo "Applying migrations:"
+python manage.py migrate --noinput
+
 echo "Postgresql migrations finished"
 
-gunicorn tsa_app.wsgi:application --bind 0.0.0.0:8000
+
+echo "Starting gunicorn..."
+gunicorn tsa_app.wsgi:application --bind 0.0.0.0:8020 --workers 2 
