@@ -22,6 +22,7 @@ The store also allows clients to upload their own designs and to customize them 
     - [Models](#models)
     - [Brief Explanation of the Views](#brief-explanation-of-the-views)
     - [Installation](#installation)
+    - [Docker Containerization Usage](#docker-containerization-usage)
   - [Screenshots of the Django Backend Admin Panel](#screenshots-of-the-django-backend-admin-panel)
     - [Mobile View](#mobile-view)
     - [Desktop View](#desktop-view)
@@ -179,6 +180,32 @@ Congratulations =) !!! The App should be running in [localhost:8000](http://loca
 > category Truck Sign.
 
 ---
+
+### Docker Containerization Usage
+
+1. Clone the repo:
+
+    ```bash
+    git clone <INSERT URL>
+    cd truck-signs-api
+    ```
+
+2. Adjust environment variables, including, DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL and DJANGO_SUPERUSER_PASSWORD. Make sure the POSTGRES_DB, POSTGRES_USER and POSTGRES_PASSWORD are the same as the DB_NAME, DB_USER and DB_PASSWORD
+
+3. Use the following command to run docker compose:
+This will take a while the first time.
+
+    ```bash
+    docker compose up -d
+    ```
+
+4. To check if it started correctly use the following command:
+
+```bash
+docker compose ps
+```
+
+5. Using the super user credentials you set in the .env file, access the backend through <localhost>:<BACKEND_PORT/admin> (BACKEND_PORT default is 8020)
 
 ## Screenshots of the Django Backend Admin Panel
 
