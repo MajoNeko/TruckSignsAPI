@@ -199,9 +199,12 @@ Congratulations =) !!! The App should be running in [localhost:8000](http://loca
     ```
 
 4. Use the following command to run docker compose:
-This will take a while the first time.
+This will take a while the first time. The compose file will attempt to get the signed image file from the GHCR repo, if that fails, it will fall back to a local build.
 
     ```bash
+    #with a specific sha tag:
+    $env:GITHUB_SHA="abc1234"; docker compose up -d
+    #with latest:
     docker compose up -d
     ```
 
