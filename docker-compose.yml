@@ -3,13 +3,14 @@ services:
     image: postgres:14
     container_name: tsa_db
     restart: unless-stopped
-    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     networks:
       - tsa-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
     healthcheck:
       test:
         [
@@ -21,7 +22,10 @@ services:
       retries: 5
 
   backend:
-    build: .
+    image: ghcr.io/majoneko/trucksigns-api:${GITHUB_SHA:-latest}
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: tsa_backend
     restart: unless-stopped
     networks:
