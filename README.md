@@ -192,20 +192,26 @@ Congratulations =) !!! The App should be running in [localhost:8000](http://loca
 
 2. Adjust environment variables, including, DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL and DJANGO_SUPERUSER_PASSWORD. Make sure the POSTGRES_DB, POSTGRES_USER and POSTGRES_PASSWORD are the same as the DB_NAME, DB_USER and DB_PASSWORD
 
-3. Use the following command to run docker compose:
+3. Generate a SECRET_KEY and set it in the .env file:
+
+    ```bash
+    docker compose exec backend python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key()"
+    ```
+
+4. Use the following command to run docker compose:
 This will take a while the first time.
 
     ```bash
     docker compose up -d
     ```
 
-4. To check if it started correctly use the following command:
+5. To check if it started correctly use the following command:
 
 ```bash
 docker compose ps
 ```
 
-5. Using the super user credentials you set in the .env file, access the backend through <localhost>:<BACKEND_PORT/admin> (BACKEND_PORT default is 8020)
+6. Using the super user credentials you set in the .env file, access the backend through <localhost>:<BACKEND_PORT/admin> (BACKEND_PORT default is 8020)
 
 ## Screenshots of the Django Backend Admin Panel
 
