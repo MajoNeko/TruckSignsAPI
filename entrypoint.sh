@@ -17,7 +17,7 @@ try:
 except psycopg2.OperationalError:
     sys.exit(1)
 "; do
-  echo "Postgres unavailable, retrying in 2s..."
+  echo "Postgres unavailable, retrying in 5s..."
   sleep 5
 done
 
@@ -31,6 +31,8 @@ python manage.py migrate --noinput
 
 echo "Postgresql migrations finished"
 
+echo "Ensuring superuser exists..."
+python manage.py createsuperuser --noinput 2>/dev/null || echo "Superuser already exists."
 
 echo "Starting gunicorn..."
 gunicorn tsa_app.wsgi:application --bind 0.0.0.0:8020 --workers 2 
