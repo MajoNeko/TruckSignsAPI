@@ -33,6 +33,7 @@ services:
     environment:
       MODE: ${MODE}
       DEBUG_ENABLED: ${DEBUG}
+      SECRET_KEY: ${SECRET_KEY}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
