@@ -190,31 +190,36 @@ Congratulations =) !!! The App should be running in [localhost:8000](http://loca
     cd truck-signs-api
     ```
 
-2. Adjust environment variables, including, DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL and DJANGO_SUPERUSER_PASSWORD. Make sure the POSTGRES_DB, POSTGRES_USER and POSTGRES_PASSWORD are the same as the DB_NAME, DB_USER and DB_PASSWORD
+2. Copy the content of the `example.env` file that is on projects root level into a `.env` file:
+        ```bash
+        cp example.env .env
+        ```
 
-3. Generate a SECRET_KEY and set it in the .env file:
+3. Adjust environment variables, including, DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL and DJANGO_SUPERUSER_PASSWORD. Make sure the POSTGRES_DB, POSTGRES_USER and POSTGRES_PASSWORD are the same as the DB_NAME, DB_USER and DB_PASSWORD. (For more information on the .env file check out the "Configure the environment variables." section under [Installation](#installation))
+
+4. Generate a SECRET_KEY and set it in the .env file:
 
     ```bash
     docker compose exec backend python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key()"
     ```
 
-4. Use the following command to run docker compose:
+5. Use the following command to run docker compose:
 This will take a while the first time. The compose file will attempt to get the signed image file from the GHCR repo, if that fails, it will fall back to a local build.
 
     ```bash
-    #with a specific sha tag:
+    # with a specific sha tag:
     $env:GITHUB_SHA="abc1234"; docker compose up -d
-    #with latest:
+    # default:
     docker compose up -d
     ```
 
-5. To check if it started correctly use the following command:
+6. To check if it started correctly use the following command:
 
 ```bash
 docker compose ps
 ```
 
-6. Using the super user credentials you set in the .env file, access the backend through <localhost>:<BACKEND_PORT/admin> (BACKEND_PORT default is 8020)
+7. Using the super user credentials you set in the .env file, access the backend through <localhost>:<BACKEND_PORT/admin> (BACKEND_PORT default is 8020)
 
 ## Screenshots of the Django Backend Admin Panel
 
