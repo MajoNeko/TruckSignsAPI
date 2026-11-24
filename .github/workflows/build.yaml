@@ -25,14 +25,39 @@ jobs:
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      # Set repository owner name to lowercase for GHCR and set immutable tags for signed images
+      - name: Docker meta (set  multiple tags and lowercase the repo user name)
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/trucksigns-api
+          tags: |
+            type=raw,value=latest
+            type=sha, format=short,prefix=sha-
+            type=sha, format=long
+            type=ref,event=branch
+            type=semver,pattern={{version}}
       
       - name: Build and push
+        id: push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          tags: ${{ steps.meta.outputs.tags }}
+          provenance: true
+          sbom: true
+      
+      # Sign image by digest
+      - name: Sign backend image
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+            OWNER_LC="$(echo "${OWNER}" | tr '[:upper:]' '[:lower:]')"
+            REF="ghcr.io/${OWNER_LC}/conduit-backend@${DIGEST}"
+            echo "Signing ${REF}"
+            cosign sign --yes "${REF}"
 
     

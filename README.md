@@ -22,6 +22,8 @@ The store also allows clients to upload their own designs and to customize them 
     - [Models](#models)
     - [Brief Explanation of the Views](#brief-explanation-of-the-views)
     - [Installation](#installation)
+      - [Docker Containerization Usage](#docker-containerization-usage)
+      - [Configure the environment variables](#configure-the-environment-variables)
   - [Screenshots of the Django Backend Admin Panel](#screenshots-of-the-django-backend-admin-panel)
     - [Mobile View](#mobile-view)
     - [Desktop View](#desktop-view)
@@ -114,22 +116,61 @@ The behavior of some of the views had to be modified to address functionalities 
 
 ### Installation
 
+### Docker Containerization Usage
+
 1. Clone the repo:
+
     ```bash
     git clone <INSERT URL>
     cd truck-signs-api
     ```
-1. Configure a virtual env
-    ```bash
-    python -m venv venv
-    venv\Scripts\activate
-    ```
-1. Configure the environment variables.
-    1. Copy the content of the `example.env` file that is on projects root level into a `.env` file:
+
+2. Copy the content of the `example.env` file that is on projects root level into a `.env` file:
         ```bash
         cp example.env .env
         ```
-    2. The new `.env` file should contain all the environment variables necessary to run all the django app in all the environments. However, the only needed variables for the development environment to run are the following:
+
+3. Adjust environment variables, including, DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL and DJANGO_SUPERUSER_PASSWORD. Make sure the POSTGRES_DB, POSTGRES_USER and POSTGRES_PASSWORD are the same as the DB_NAME, DB_USER and DB_PASSWORD. (For more information on the .env file check out the [Configure the environment variables](#configure-the-environment-variables) section)
+
+4. Generate a SECRET_KEY and set it in the .env file:
+
+    ```bash
+    docker compose exec backend python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key()"
+    ```
+
+5. Use the following command to run docker compose:
+This will take a while the first time. The compose file will attempt to get the signed image file from the GHCR repo, if that fails, it will fall back to a local build.
+
+    ```bash
+    # with a specific sha tag:
+    $env:GITHUB_SHA="abc1234"; docker compose up -d
+    # default:
+    docker compose up -d
+    ```
+
+6. To check if it started correctly use the following command:
+
+```bash
+docker compose ps
+```
+
+7. Using the super user credentials you set in the .env file, access the backend through  [localhost:8020/admin](http://localhost:8020/admin) (BACKEND_PORT default is 8020)
+
+> [!NOTE]
+> To create Truck vinyls with Truck logos in them, first create the __Category__ Truck Sign,
+> and then the __Product__ (can have any name). This is to make sure the frontend retrieves
+> the Truck vinyls for display in the Product Grid as it only fetches the products of the
+> category Truck Sign.
+
+---
+
+### Configure the environment variables
+
+1. Copy the content of the `example.env` file that is on projects root level into a `.env` file:
+        ```bash
+        cp example.env .env
+        ```
+2. The new `.env` file should contain all the environment variables necessary to run all the django app in all the environments. However, the only needed variables for the development environment to run are the following:
         ```bash
         SECRET_KEY
         DB_NAME
@@ -140,7 +181,7 @@ The behavior of some of the views had to be modified to address functionalities 
         EMAIL_HOST_USER
         EMAIL_HOST_PASSWORD
         ```
-    3. For the `postgres` database, the default configuration should be:
+3. For the `postgres` database, the default configuration should be:
         ```bash
         DB_NAME=trucksigns_db
         DB_USER=trucksigns_user
@@ -148,37 +189,9 @@ The behavior of some of the views had to be modified to address functionalities 
         DB_HOST=localhost
         DB_PORT=5432
         ```
-    4. The SECRET_KEY is the django secret key. To generate a new one see: [Stackoverflow Link](https://stackoverflow.com/questions/41298963/is-there-a-function-for-generating-settings-secret-key-in-django)
+4. The SECRET_KEY is the django secret key. To generate a new one see: [Stackoverflow Link](https://stackoverflow.com/questions/41298963/is-there-a-function-for-generating-settings-secret-key-in-django)
 
-    5. The `EMAIL_HOST_USER` and the `EMAIL_HOST_PASSWORD` are the credentials to send emails from the website when a client makes a purchase. This is currently disable, but the code to activate this can be found in views.py in the create order view as comments. Therefore, any valid email and password will work.
-1. Run the migrations:
-    ```bash
-    python src/manage.py makemigrations
-    python src/manage.py migrate
-    ```
-1. Collect static files:
-    ```bash
-    python src/manage.py collectstatic
-    ```
-1. Run the app:
-    ```bash
-    python src/manage.py runserver
-    ```
-1. (Optional step) To create a super user run:
-    ```bash
-    python src/manage.py createsuperuser
-    ```
-1. (Optional step) Set up the database. [Django database setup example](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04).
-
-Congratulations =) !!! The App should be running in [localhost:8000](http://localhost:8000)
-
-> [!NOTE]
-> To create Truck vinyls with Truck logos in them, first create the __Category__ Truck Sign,
-> and then the __Product__ (can have any name). This is to make sure the frontend retrieves
-> the Truck vinyls for display in the Product Grid as it only fetches the products of the
-> category Truck Sign.
-
----
+5. The `EMAIL_HOST_USER` and the `EMAIL_HOST_PASSWORD` are the credentials to send emails from the website when a client makes a purchase. This is currently disable, but the code to activate this can be found in views.py in the create order view as comments. Therefore, any valid email and password will work.
 
 ## Screenshots of the Django Backend Admin Panel
 
