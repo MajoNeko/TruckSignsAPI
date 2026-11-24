@@ -4,8 +4,8 @@ services:
     container_name: tsa_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME:-trucksigns_db}
+      POSTGRES_USER: ${DB_USER:-trucksigns_user}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     networks:
       - tsa-network
@@ -31,16 +31,16 @@ services:
     networks:
       - tsa-network
     environment:
-      MODE: ${MODE}
-      DEBUG_ENABLED: ${DEBUG}
-      SECRET_KEY: ${SECRET_KEY}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
+      MODE: ${MODE:-prod}
+      DEBUG_ENABLED: ${DEBUG:-False}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+      DB_NAME: ${DB_NAME:-trucksigns_db}
+      DB_USER: ${DB_USER:-trucksigns_user}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
-      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-Admin}
       DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
     volumes:
@@ -50,7 +50,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "${BACKEND_PORT}:8020"
+      - "${BACKEND_PORT:-8020}:8020"
 
 volumes:
   postgres_data:
